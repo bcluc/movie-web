@@ -107,9 +107,11 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    if (supabase.auth.currentSession != null) {
-      context.go('/browse');
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (supabase.auth.currentSession != null) {
+        context.go('/browse');
+      }
+    });
   }
 
   @override

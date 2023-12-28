@@ -17,8 +17,8 @@ class _IntroScreenState extends State<IntroScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const HeadSection(),
-            const MiddleSection(),
+            HeadSection(),
+            MiddleSection(),
             FAQSection(),
           ],
         ),

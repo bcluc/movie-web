@@ -1,39 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_web/app_route.dart';
-import 'package:movie_web/cubits/my_list/my_list_cubit.dart';
-import 'package:movie_web/cubits/route_stack/route_stack_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://kpaxjjmelbqpllxenpxz.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYXhqam1lbGJxcGxseGVucHh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5MzA0NjQ5NCwiZXhwIjoyMDA4NjIyNDk0fQ.hGeExPN7h7gYiOILzPU57vSob9LC1UB-W2o6Z7WGLZs',
+    url: '',
+    anonKey: '',
   );
-  // runApp(
-  //   MultiBlocProvider(
-  //     providers: [
-  //       BlocProvider(
-  //         create: (context) => MyListCubit(),
-  //       ),
-  //       BlocProvider(
-  //         create: (context) => RouteStackCubit(),
-  //       ),
-  //     ],
-  //     child: const MyApp(),
-  //   ),
-  // );
   runApp(const MyApp());
 }
 
 final supabase = Supabase.instance.client;
-const tmdbApiKey = 'a29284b32c092cc59805c9f5513d3811';
-const baseAvatarUrl = 'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/avatar/';
+const tmdbApiKey = '';
+const baseAvatarUrl = '';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

@@ -41,5 +41,15 @@ class Assets {
   static const String umbrellaAcademyTitle = '${_images}umbrella_academy_title.png';
 
   static const String violetEvergarden = '${_images}violet_evergarden.jpg';
+  static const String violetEvergardenTitle = '${_images}violet_evrg_title.png';
+  static const String violetEvergardenBackdropPath = '${_images}violet_evrg_backdrop.jpg';
+  static const String violetEvergardenVideoUrl = 'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/film/violet_evergarden_the_movie/violet_evergarden_trailer.mp4';
+  static const String violetEvergardenDecs =
+      'Cuộc Chiến lớn cuối cùng cũng kết thúc sau bốn năm xung đột dài; chia rẽ thành hai phần, lục địa Telesis bắt đầu phục hồi từ từ. Trong cuộc chiến đẫm máu đó là Violet Evergarden, một cô gái trẻ được nuôi dưỡng với mục đích duy nhất là tiêu diệt kẻ thù.';
+
   static const String witcher = '${_images}witcher.jpg';
+
+  // ICON
+  static const String _icons = 'assets/icons/';
+  static const String userIcon = '${_icons}user-solid.svg';
 }
