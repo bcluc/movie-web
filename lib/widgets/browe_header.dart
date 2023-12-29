@@ -66,7 +66,7 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.black54,
+                      Colors.black87,
                       Colors.transparent,
                       Colors.transparent,
                       Colors.black,

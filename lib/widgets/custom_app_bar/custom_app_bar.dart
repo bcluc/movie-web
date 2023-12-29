@@ -61,6 +61,15 @@ class CustomAppBar extends StatelessWidget {
                       Icons.search_rounded,
                     ),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      // Notification
+                    },
+                    style: IconButton.styleFrom(foregroundColor: Colors.white),
+                    icon: const Icon(
+                      Icons.notifications_active_rounded,
+                    ),
+                  ),
                   const Gap(20),
                   const MyProfile(),
                 ],

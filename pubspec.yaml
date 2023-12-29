@@ -48,6 +48,8 @@ dependencies:
   cached_network_image: ^3.3.0
   video_player: ^2.8.1
   flutter_svg: ^2.0.9
+  intl: ^0.18.1
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:
