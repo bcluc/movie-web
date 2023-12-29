@@ -30,7 +30,6 @@ class _FAQSectionState extends State<FAQSection> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 40, 20, 40),
-      height: 700,
       child: Column(
         children: [
           const Text(

@@ -11,7 +11,8 @@ class Assets {
 
   static const String sintel = '${_images}sintel.jpg';
   static const String sintelTitle = '${_images}sintel_title.png';
-  static const String sintelVideoUrl = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
+  static const String sintelVideoUrl =
+      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
 
   static const String atla = '${_images}atla.jpg';
   static const String atlaTitle = '${_images}atla_title.png';
@@ -43,7 +44,9 @@ class Assets {
   static const String violetEvergarden = '${_images}violet_evergarden.jpg';
   static const String violetEvergardenTitle = '${_images}violet_evrg_title.png';
   static const String violetEvergardenBackdropPath = '${_images}violet_evrg_backdrop.jpg';
-  static const String violetEvergardenVideoUrl = 'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/film/violet_evergarden_the_movie/violet_evergarden_trailer.mp4';
+  static const String violetEvergardenOnlineVideoUrl =
+      'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/film/violet_evergarden_the_movie/violet_evergarden_trailer.mp4';
+
   static const String violetEvergardenDecs =
       'Cuộc Chiến lớn cuối cùng cũng kết thúc sau bốn năm xung đột dài; chia rẽ thành hai phần, lục địa Telesis bắt đầu phục hồi từ từ. Trong cuộc chiến đẫm máu đó là Violet Evergarden, một cô gái trẻ được nuôi dưỡng với mục đích duy nhất là tiêu diệt kẻ thù.';
 
@@ -52,4 +55,9 @@ class Assets {
   // ICON
   static const String _icons = 'assets/icons/';
   static const String userIcon = '${_icons}user-solid.svg';
+
+  // VIDEO
+  static const String _videos = 'assets/videos/';
+  static const String violetEvergardenOfflineVideoUrl =
+      '${_videos}violet_evergarden_trailer.mp4';
 }

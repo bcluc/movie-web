@@ -87,7 +87,9 @@ class _FAQButtonState extends State<FAQButton> with SingleTickerProviderStateMix
                       ),
                     ),
                     Icon(
-                      isVisible ? Icons.arrow_downward_outlined : Icons.arrow_forward_rounded,
+                      isVisible
+                          ? Icons.arrow_downward_outlined
+                          : Icons.arrow_forward_rounded,
                     ),
                   ],
                 ),
@@ -105,7 +107,7 @@ class _FAQButtonState extends State<FAQButton> with SingleTickerProviderStateMix
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-                  margin: const EdgeInsets.only(bottom: 5),
+                  margin: const EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 45, 45, 45),
                     borderRadius: BorderRadius.circular(8),

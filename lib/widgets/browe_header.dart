@@ -16,10 +16,18 @@ class BrowseHeader extends StatefulWidget {
 class _BrowseHeaderState extends State<BrowseHeader> {
   bool _isMuted = true;
 
-  late final VideoPlayerController _videoController = VideoPlayerController.networkUrl(
-    Uri.parse(
-      Assets.violetEvergardenVideoUrl,
-    ),
+  //
+  // late final VideoPlayerController _videoController = VideoPlayerController.networkUrl(
+  //   Uri.parse(
+  //     Assets.violetEvergardenOnlineVideoUrl,
+  //   ),
+  // )
+  //   ..initialize().then((_) => setState(() {}))
+  //   ..setVolume(0)
+  //   ..play();
+
+  late final VideoPlayerController _videoController = VideoPlayerController.asset(
+    Assets.violetEvergardenOfflineVideoUrl,
   )
     ..initialize().then((_) => setState(() {}))
     ..setVolume(0)
@@ -30,12 +38,16 @@ class _BrowseHeaderState extends State<BrowseHeader> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _videoController.value.isPlaying ? _videoController.pause() : _videoController.play(),
+      onTap: () => _videoController.value.isPlaying
+          ? _videoController.pause()
+          : _videoController.play(),
       child: Stack(
         alignment: Alignment.bottomLeft,
         children: [
           AspectRatio(
-            aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
+            aspectRatio: _videoController.value.isInitialized
+                ? _videoController.value.aspectRatio
+                : 16 / 9,
             child: _videoController.value.isInitialized
                 ? VideoPlayer(_videoController)
                 : Image.asset(
@@ -47,7 +59,9 @@ class _BrowseHeaderState extends State<BrowseHeader> {
             left: 0,
             right: 0,
             child: AspectRatio(
-              aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
+              aspectRatio: _videoController.value.isInitialized
+                  ? _videoController.value.aspectRatio
+                  : 16 / 9,
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -151,7 +165,9 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                         color: Colors.white,
                         iconSize: 30.0,
                         onPressed: () => setState(() {
-                          _isMuted ? _videoController.setVolume(100) : _videoController.setVolume(0);
+                          _isMuted
+                              ? _videoController.setVolume(100)
+                              : _videoController.setVolume(0);
                           _isMuted = _videoController.value.volume == 0;
                         }),
                       ).animate().fade(),
