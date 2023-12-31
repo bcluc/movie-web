@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class GridPersons extends StatelessWidget {
@@ -102,9 +103,7 @@ class GridPersons extends StatelessWidget {
                           height: 253,
                           child: Center(
                             child: Icon(
-                              personsData[index]['person']['gender'] == 0
-                                  ? Icons.person_rounded
-                                  : Icons.person_3_rounded,
+                              personsData[index]['person']['gender'] == 0 ? Icons.person_rounded : Icons.person_3_rounded,
                               color: Colors.grey,
                               size: 48,
                             ),
@@ -113,11 +112,22 @@ class GridPersons extends StatelessWidget {
                       : ClipRRect(
                           // minus border's width = 1
                           borderRadius: BorderRadius.circular(7),
-                          child: Image.network(
-                            'https://www.themoviedb.org/t/p/w276_and_h350_face/${personsData[index]['person']['profile_path']}',
-                            width: double.infinity,
+                          // child: Image.network(
+                          //   'https://www.themoviedb.org/t/p/w276_and_h350_face/${personsData[index]['person']['profile_path']}',
+                          //   width: double.infinity,
+                          //   height: 253,
+                          //   fit: BoxFit.cover,
+                          // ),
+                          child: CachedNetworkImage(
+                            imageUrl: 'https://www.themoviedb.org/t/p/w276_and_h350_face/${personsData[index]['person']['profile_path']}',
                             height: 253,
+                            width: double.infinity,
                             fit: BoxFit.cover,
+                            fadeInDuration: const Duration(milliseconds: 500),
+                            fadeOutDuration: const Duration(milliseconds: 0),
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                         ),
                   Padding(

@@ -131,10 +131,16 @@ class _SignInScreenState extends State<SignInScreen> {
             padding: const EdgeInsets.all(40),
             child: Row(
               children: [
-                Image.asset(
-                  Assets.viovidLogo,
-                  width: 150,
-                  fit: BoxFit.cover,
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: TapRegion(
+                    onTapInside: (event) => context.go('/intro'),
+                    child: Image.asset(
+                      Assets.viovidLogo,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 const Spacer(),
                 const Text(
@@ -227,7 +233,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const Gap(10),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      context.go('/request-recovery');
+                    },
                     child: const Text(
                       'Quên mật khẩu',
                       style: TextStyle(
