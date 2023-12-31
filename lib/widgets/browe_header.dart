@@ -2,8 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:movie_web/assets.dart';
+import 'package:movie_web/cubits/video_slider/video_slider_cubit.dart';
+import 'package:movie_web/widgets/film_detail/film_detail.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:video_player/video_player.dart';
 
 class BrowseHeader extends StatefulWidget {
@@ -38,16 +42,12 @@ class _BrowseHeaderState extends State<BrowseHeader> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _videoController.value.isPlaying
-          ? _videoController.pause()
-          : _videoController.play(),
+      onTap: () => _videoController.value.isPlaying ? _videoController.pause() : _videoController.play(),
       child: Stack(
         alignment: Alignment.bottomLeft,
         children: [
           AspectRatio(
-            aspectRatio: _videoController.value.isInitialized
-                ? _videoController.value.aspectRatio
-                : 16 / 9,
+            aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
             child: _videoController.value.isInitialized
                 ? VideoPlayer(_videoController)
                 : Image.asset(
@@ -59,9 +59,7 @@ class _BrowseHeaderState extends State<BrowseHeader> {
             left: 0,
             right: 0,
             child: AspectRatio(
-              aspectRatio: _videoController.value.isInitialized
-                  ? _videoController.value.aspectRatio
-                  : 16 / 9,
+              aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -115,28 +113,30 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                 const SizedBox(height: 20.0),
                 Row(
                   children: [
-                    FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                      ),
-                      onPressed: () => print('Play'),
-                      icon: const Icon(Icons.play_arrow_rounded, size: 30.0),
-                      label: const Text(
-                        'Play',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 16.0),
+                    // FilledButton.icon(
+                    //   style: FilledButton.styleFrom(
+                    //     foregroundColor: Colors.black,
+                    //     backgroundColor: Colors.white,
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    //   ),
+                    //   onPressed: () {
+                    //     print('Play Violet Evrg Local Video');
+                    //   },
+                    //   icon: const Icon(Icons.play_arrow_rounded, size: 30.0),
+                    //   label: const Text(
+                    //     'Play',
+                    //     style: TextStyle(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.w600,
+                    //     ),
+                    //     maxLines: 1,
+                    //     overflow: TextOverflow.ellipsis,
+                    //   ),
+                    // ),
+                    // const SizedBox(width: 16.0),
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -146,10 +146,21 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       ),
-                      onPressed: () => print('More Info'),
+                      onPressed: () {
+                        print('More Info Violet Evrg');
+                        Navigator.of(context).push(
+                          PageTransition(
+                            child: const FilmDetail(filmId: '533514'),
+                            type: PageTransitionType.rightToLeft,
+                            duration: 300.ms,
+                            reverseDuration: 300.ms,
+                            settings: const RouteSettings(name: '/film_detail@533514'),
+                          ),
+                        );
+                      },
                       icon: const Icon(Icons.info_outline, size: 30.0),
                       label: const Text(
-                        'Thông tin khác',
+                        'Thông tin phim',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -165,9 +176,7 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                         color: Colors.white,
                         iconSize: 30.0,
                         onPressed: () => setState(() {
-                          _isMuted
-                              ? _videoController.setVolume(100)
-                              : _videoController.setVolume(0);
+                          _isMuted ? _videoController.setVolume(100) : _videoController.setVolume(0);
                           _isMuted = _videoController.value.volume == 0;
                         }),
                       ).animate().fade(),

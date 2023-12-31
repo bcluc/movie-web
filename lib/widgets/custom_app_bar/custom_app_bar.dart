@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_web/assets.dart';
 import 'package:movie_web/widgets/custom_app_bar/my_profile.dart';
 
@@ -36,9 +37,21 @@ class CustomAppBar extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  buildAppBarButton('Trang chủ', scrollOffset, () {}),
+                  buildAppBarButton(
+                    'Trang chủ',
+                    scrollOffset,
+                    () {
+                      context.go('/browse');
+                    },
+                  ),
                   const Gap(20),
-                  buildAppBarButton('Danh sách của tôi', scrollOffset, () {}),
+                  buildAppBarButton(
+                    'Danh sách của tôi',
+                    scrollOffset,
+                    () {
+                      context.go('/browse/my-list');
+                    },
+                  ),
                   const Gap(20),
                   buildAppBarButton('Mới phát hành', scrollOffset, () {}),
                   const Spacer(),

@@ -1,4 +1,8 @@
+import 'package:flutter/src/widgets/basic.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
+import 'package:movie_web/cubits/volume/volume_slider_cubit.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/screens/auth/request_recovery.dart';
 import 'package:movie_web/screens/auth/reset_password.dart';
@@ -6,6 +10,7 @@ import 'package:movie_web/screens/auth/sign_up.dart';
 import 'package:movie_web/screens/auth/sign_in.dart';
 import 'package:movie_web/screens/browse.dart';
 import 'package:movie_web/screens/intro.dart';
+import 'package:movie_web/screens/my_list.dart';
 
 GoRouter appRouter = GoRouter(
   routes: [
@@ -67,7 +72,6 @@ GoRouter appRouter = GoRouter(
         path: '/reset-password',
         name: 'reset-password',
         builder: (ctx, state) {
-          print('state.uri: ${state.uri}\n');
           return ResetPassword(
             url: state.uri,
           );
@@ -75,13 +79,26 @@ GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/browse',
       name: 'browse',
-      builder: (ctx, state) => const BrowseScreen(),
+      builder: (ctx, state) => BlocProvider(
+        create: (_) => AppBarCubit(),
+        child: const BrowseScreen(),
+      ),
       redirect: (context, state) {
         if (supabase.auth.currentSession == null) {
           return '/intro';
         }
         return null;
       },
+      routes: [
+        GoRoute(
+          path: 'my-list',
+          name: 'my-list',
+          builder: (ctx, state) => BlocProvider(
+            create: (_) => AppBarCubit(),
+            child: const MyList(),
+          ),
+        ),
+      ],
     ),
   ],
 );

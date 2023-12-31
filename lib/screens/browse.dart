@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
+import 'package:movie_web/cubits/my_list/my_list_cubit.dart';
+import 'package:movie_web/data/dynamic/profile_data.dart';
 import 'package:movie_web/data/dynamic/topics_data.dart';
 import 'package:movie_web/widgets/browe_header.dart';
 import 'package:movie_web/widgets/content_list.dart';
@@ -16,7 +20,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   late final ScrollController _scrollController = ScrollController()
     ..addListener(() {
-      setState(() {});
+      context.read<AppBarCubit>().setOffset(_scrollController.offset);
     });
 
   bool isFetchedData = false;
@@ -32,6 +36,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
     */
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchTopicsData();
+      await fetchProfileData();
+      // ignore: use_build_context_synchronously
+      context.read<MyListCubit>().setList(profileData['my_list']);
+
       setState(() {
         isFetchedData = true;
       });
@@ -52,8 +60,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
               preferredSize: Size(_screenSize.width, 100),
-              child: CustomAppBar(
-                scrollOffset: _scrollController.hasClients ? _scrollController.offset : 0,
+              child: BlocBuilder<AppBarCubit, double>(
+                builder: (ctx, offset) {
+                  return CustomAppBar(
+                    scrollOffset: offset,
+                  );
+                },
               ),
             ),
             body: CustomScrollView(
@@ -76,7 +88,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
               ],
             ),
           )
-        : ColoredBox(
+        : const ColoredBox(
             color: Colors.black,
           );
   }

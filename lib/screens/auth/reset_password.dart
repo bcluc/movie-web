@@ -46,7 +46,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       });
 
       try {
-        https: //supabase.com/docs/guides/auth/passwords
+        // https: //supabase.com/docs/guides/auth/passwords
         await supabase.auth.getSessionFromUrl(widget.url);
 
         await supabase.auth.updateUser(

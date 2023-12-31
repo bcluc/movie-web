@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_web/app_route.dart';
+import 'package:movie_web/cubits/my_list/my_list_cubit.dart';
+import 'package:movie_web/cubits/route_stack/route_stack_cubit.dart';
+import 'package:movie_web/cubits/volume/volume_slider_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -24,7 +28,22 @@ Future<void> main() async {
     More: https://supabase.com/docs/guides/auth/passwords
     */
   );
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => RouteStackCubit(),
+        ),
+        BlocProvider(
+          create: (context) => MyListCubit(),
+        ),
+        BlocProvider(
+          create: (context) => VolumeSliderCubit(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 final supabase = Supabase.instance.client;

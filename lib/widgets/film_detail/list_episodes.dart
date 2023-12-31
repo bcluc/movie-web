@@ -1,24 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:movie_web/cubits/video_play_control/video_play_control.dart';
+import 'package:movie_web/cubits/video_slider/video_slider_cubit.dart';
 import 'package:movie_web/models/episode.dart';
+import 'package:movie_web/models/season.dart';
 import 'package:movie_web/utils/common_variables.dart';
+import 'package:movie_web/widgets/film_detail/film_detail.dart';
+import 'package:movie_web/widgets/video_player/video_player_view.dart';
 
 class ListEpisodes extends StatefulWidget {
-  const ListEpisodes(this.episodes, {super.key});
-
-  final List<Episode> episodes;
+  const ListEpisodes({super.key});
 
   @override
   State<ListEpisodes> createState() => _ListEpisodesState();
 }
 
 class _ListEpisodesState extends State<ListEpisodes> {
-  int selectedSeason = 0;
   final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
+    final List<Season> seasons = filmData['seasons'];
+    final currentSeasonIndex = filmData['currentSeasonIndex'];
+    final List<Episode> episodes = seasons[currentSeasonIndex].episodes;
+
     return SizedBox(
       height: 360,
       child: RawScrollbar(
@@ -29,7 +36,7 @@ class _ListEpisodesState extends State<ListEpisodes> {
         thumbVisibility: true,
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: widget.episodes.length,
+          itemCount: episodes.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             return Ink(
@@ -44,7 +51,7 @@ class _ListEpisodesState extends State<ListEpisodes> {
                       color: const Color(0xFF333333),
                       image: DecorationImage(
                         image: CachedNetworkImageProvider(
-                          'https://www.themoviedb.org/t/p/w454_and_h254_bestv2/${widget.episodes[index].stillPath}',
+                          'https://www.themoviedb.org/t/p/w454_and_h254_bestv2/${episodes[index].stillPath}',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -52,13 +59,23 @@ class _ListEpisodesState extends State<ListEpisodes> {
                     height: 127,
                     child: InkWell(
                       onTap: () {
-                        // Navigator.of(context).pop(
-                        //   {
-                        //     'episode': widget.episode,
-                        //     // seasonIndex là số thứ tự season chứa tập phim này
-                        //     'season_index': widget.seasonIndex,
-                        //   },
-                        // );
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider(
+                                  create: (ctx) => VideoSliderCubit(),
+                                ),
+                                BlocProvider(
+                                  create: (ctx) => VideoPlayControlCubit(),
+                                ),
+                              ],
+                              child: VideoPlayerView(
+                                firstEpisodeToPlay: episodes[index],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                       borderRadius: BorderRadius.circular(8),
                       child: const Center(
@@ -72,7 +89,7 @@ class _ListEpisodesState extends State<ListEpisodes> {
                   ),
                   const Gap(6),
                   Text(
-                    widget.episodes[index].title,
+                    episodes[index].title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -86,7 +103,7 @@ class _ListEpisodesState extends State<ListEpisodes> {
                     color: Colors.grey,
                   ),
                   Text(
-                    widget.episodes[index].subtitle,
+                    episodes[index].subtitle,
                     style: const TextStyle(
                       color: Colors.grey,
                     ),

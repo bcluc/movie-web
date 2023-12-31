@@ -12,6 +12,7 @@ import 'package:movie_web/models/season.dart';
 import 'package:movie_web/utils/common_variables.dart';
 import 'package:movie_web/utils/extension.dart';
 import 'package:movie_web/widgets/film_detail/bottom_tab.dart';
+import 'package:movie_web/widgets/film_detail/favorite_button.dart';
 
 class FilmDetail extends StatefulWidget {
   const FilmDetail({
@@ -25,13 +26,12 @@ class FilmDetail extends StatefulWidget {
   State<FilmDetail> createState() => _FilmDetailState();
 }
 
+final Map<String, dynamic> filmData = {};
+
 class _FilmDetailState extends State<FilmDetail> {
   late final Film _film;
 
-  late final bool _isMovie;
   bool _isExpandOverview = false;
-
-  int _currentSeasonIndex = 0;
 
   late final _futureMovie = _fetchMovie();
   Future<void> _fetchMovie() async {
@@ -61,8 +61,7 @@ class _FilmDetailState extends State<FilmDetail> {
       reviews: [],
     );
     // print('backdrop_path = ${_film!['backdrop_path']}');
-    final List<dynamic> genresData =
-        await supabase.from('film_genre').select('genre(*)').eq('film_id', widget.filmId);
+    final List<dynamic> genresData = await supabase.from('film_genre').select('genre(*)').eq('film_id', widget.filmId);
 
     for (var genreRow in genresData) {
       _film.genres.add(
@@ -75,12 +74,8 @@ class _FilmDetailState extends State<FilmDetail> {
 
     // print(_film.genres.length);
 
-    final List<dynamic> seasonsData = await supabase
-        .from('season')
-        .select('id, name, episode(*)')
-        .eq('film_id', widget.filmId)
-        .order('id', ascending: true)
-        .order('order', referencedTable: 'episode', ascending: true);
+    final List<dynamic> seasonsData =
+        await supabase.from('season').select('id, name, episode(*)').eq('film_id', widget.filmId).order('id', ascending: true).order('order', referencedTable: 'episode', ascending: true);
 
     for (var seasonRow in seasonsData) {
       final season = Season(
@@ -108,12 +103,12 @@ class _FilmDetailState extends State<FilmDetail> {
 
       _film.seasons.add(season);
     }
-    // print(_film.seasons.length);
 
-    final List<dynamic> reviewsData = await supabase
-        .from('review')
-        .select('user_id, star, created_at, profile(full_name, avatar_url)')
-        .eq('film_id', widget.filmId);
+    filmData['seasons'] = _film.seasons;
+    filmData['currentSeasonIndex'] = 0;
+    filmData['isMovie'] = _film.seasons[0].name == '';
+
+    final List<dynamic> reviewsData = await supabase.from('review').select('user_id, star, created_at, profile(full_name, avatar_url)').eq('film_id', widget.filmId);
 
     // print(reviewsData);
 
@@ -130,8 +125,6 @@ class _FilmDetailState extends State<FilmDetail> {
     }
 
     _film.reviews.sort((a, b) => b.createAt.compareTo(a.createAt));
-
-    _isMovie = _film.seasons[0].name == '';
   }
 
   @override
@@ -164,9 +157,7 @@ class _FilmDetailState extends State<FilmDetail> {
 
             double voteAverage = 0;
             if (_film.reviews.isNotEmpty) {
-              voteAverage = _film.reviews
-                      .fold(0, (previousValue, review) => previousValue + review.star) /
-                  _film.reviews.length;
+              voteAverage = _film.reviews.fold(0, (previousValue, review) => previousValue + review.star) / _film.reviews.length;
 
               // print(voteAverage);
             }
@@ -242,8 +233,7 @@ class _FilmDetailState extends State<FilmDetail> {
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Colors.white.withOpacity(0.2),
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -284,8 +274,7 @@ class _FilmDetailState extends State<FilmDetail> {
                         right: 0,
                         width: 90,
                         child: Container(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                           decoration: BoxDecoration(
                             color: const Color(0xFF696A6A).withOpacity(0.7),
                             border: const Border(
@@ -329,22 +318,46 @@ class _FilmDetailState extends State<FilmDetail> {
                               ),
                               textAlign: TextAlign.center,
                             ),
+                            const Gap(24),
+
                             /* Nếu Film được chọn là movie, thì nó không có Season */
-                            if (!_isMovie) ...[
-                              const Gap(24),
-                              StatefulBuilder(
-                                builder: (ctx, setStateSeasonButton) {
-                                  return PopupMenuButton(
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                                  ),
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.play_arrow_rounded, size: 30.0),
+                                  label: const Text(
+                                    'Phát',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const Gap(20),
+                                if (!filmData['isMovie']) ...[
+                                  PopupMenuButton(
                                     position: PopupMenuPosition.under,
                                     offset: const Offset(0, 2),
-                                    color: Color(0xFF333333),
+                                    color: const Color(0xFF444444).withOpacity(0.9),
                                     surfaceTintColor: Colors.transparent,
                                     itemBuilder: (ctx) => List.generate(
                                       _film.seasons.length,
                                       (index) => PopupMenuItem(
                                         onTap: () {
-                                          setStateSeasonButton(() {
-                                            _currentSeasonIndex = index;
+                                          setState(() {
+                                            filmData['currentSeasonIndex'] = index;
                                           });
                                         },
                                         child: Text(
@@ -359,8 +372,8 @@ class _FilmDetailState extends State<FilmDetail> {
                                     tooltip: '',
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFF333333),
-                                        borderRadius: BorderRadius.circular(4),
+                                        color: const Color(0xFF444444).withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 10,
@@ -369,7 +382,7 @@ class _FilmDetailState extends State<FilmDetail> {
                                       child: Row(
                                         children: [
                                           Text(
-                                            _film.seasons[_currentSeasonIndex].name,
+                                            _film.seasons[filmData['currentSeasonIndex']].name,
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,
@@ -384,10 +397,12 @@ class _FilmDetailState extends State<FilmDetail> {
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
+                                  ),
+                                  const Gap(20),
+                                ],
+                                FavoriteButton(_film.id),
+                              ],
+                            ),
                             const Gap(24),
                             Row(
                               mainAxisSize: MainAxisSize.min,
@@ -438,20 +453,13 @@ class _FilmDetailState extends State<FilmDetail> {
                                         onTapInside: (event) {},
                                         child: MouseRegion(
                                           cursor: SystemMouseCursors.click,
-                                          onEnter: (_) =>
-                                              setStateGenre(() => isHover = true),
-                                          onExit: (_) =>
-                                              setStateGenre(() => isHover = false),
+                                          onEnter: (_) => setStateGenre(() => isHover = true),
+                                          onExit: (_) => setStateGenre(() => isHover = false),
                                           child: Text(
-                                            _film.genres[index].name +
-                                                (index == _film.genres.length - 1
-                                                    ? ''
-                                                    : ', '),
+                                            _film.genres[index].name + (index == _film.genres.length - 1 ? '' : ', '),
                                             style: TextStyle(
                                               color: const Color(0xFFBEBEBE),
-                                              decoration: isHover
-                                                  ? TextDecoration.underline
-                                                  : null,
+                                              decoration: isHover ? TextDecoration.underline : null,
                                               decorationColor: Colors.white,
                                             ),
                                           ),
@@ -491,17 +499,13 @@ class _FilmDetailState extends State<FilmDetail> {
                             }),
                             child: Text(
                               _isExpandOverview ? 'Ẩn bớt' : 'Xem thêm',
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
                             ),
                           ),
                         const Gap(4),
                         BottomTab(
+                          /* truyền filmId vào để lấy được Những phim đề xuất của filmId này */
                           filmId: _film.id,
-                          isMovie: _isMovie,
-                          episode: _film.seasons[_currentSeasonIndex].episodes,
                         ),
                         const Gap(20),
                       ],

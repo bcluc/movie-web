@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/models/episode.dart';
 import 'package:movie_web/models/poster.dart';
+import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:movie_web/widgets/grid/grid_shimmer.dart';
 import 'package:movie_web/widgets/film_detail/list_episodes.dart';
 import 'package:movie_web/widgets/grid/grid_films.dart';
@@ -16,13 +17,9 @@ class BottomTab extends StatefulWidget {
   const BottomTab({
     super.key,
     required this.filmId,
-    required this.isMovie,
-    required this.episode,
   });
 
   final String filmId;
-  final bool isMovie;
-  final List<Episode> episode;
 
   @override
   State<BottomTab> createState() => _BottomTabState();
@@ -31,8 +28,6 @@ class BottomTab extends StatefulWidget {
 class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   late final TabController _tabController;
   int _tabIndex = 0;
-
-  late final _listEpisodes = ListEpisodes(widget.episode);
 
   final _gridShimmer = const GridShimmer();
 
@@ -46,9 +41,8 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   late final _futureCrewData = _fetchCrewData();
 
   Future<void> _fetchRecommendFilms() async {
-    String type = widget.isMovie ? 'movie' : 'tv';
-    String url =
-        "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
+    String type = filmData['isMovie'] ? 'movie' : 'tv';
+    String url = "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       // Parse the response JSON
@@ -74,13 +68,9 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCastData() async {
-    _castData = await supabase
-        .from('cast')
-        .select('role: character, person(id, name, profile_path, popularity)')
-        .eq('film_id', widget.filmId);
+    _castData = await supabase.from('cast').select('role: character, person(id, name, profile_path, popularity)').eq('film_id', widget.filmId);
 
-    _castData
-        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _castData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String casts = '';
     // for (var element in _castData) {
@@ -98,13 +88,9 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCrewData() async {
-    _crewData = await supabase
-        .from('crew')
-        .select('role: job, person(id, name, profile_path, popularity, gender)')
-        .eq('film_id', widget.filmId);
+    _crewData = await supabase.from('crew').select('role: job, person(id, name, profile_path, popularity, gender)').eq('film_id', widget.filmId);
 
-    _crewData
-        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _crewData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String crews = '';
     // for (var element in _crewData) {
@@ -118,7 +104,7 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 3 + (widget.isMovie ? 0 : 1),
+      length: 3 + (filmData['isMovie'] ? 0 : 1),
       vsync: this,
       initialIndex: 0,
     );
@@ -166,7 +152,7 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
             return Colors.transparent;
           }),
           tabs: [
-            if (!widget.isMovie)
+            if (!filmData['isMovie'])
               const Tab(
                 text: 'Tập phim',
               ),
@@ -184,8 +170,10 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
         const Gap(20),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 100),
-          child: switch (_tabIndex + (widget.isMovie ? 1 : 0)) {
-            0 => _listEpisodes,
+          child: switch (_tabIndex + (filmData['isMovie'] ? 1 : 0)) {
+            0 => ListEpisodes(
+                key: ValueKey(filmData['currentSeasonIndex']),
+              ),
             1 => FutureBuilder(
                 future: _futureCastData,
                 builder: (ctx, snapshot) {

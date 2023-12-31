@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:movie_web/models/poster.dart';
-import 'package:movie_web/screens/film_detail.dart';
+import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ContentList extends StatefulWidget {
@@ -68,9 +68,7 @@ class _ContentListState extends State<ContentList> {
                       onHover: (value) {},
                       child: Image(
                         image: NetworkImage(
-                          widget.isOriginals
-                              ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}'
-                              : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
+                          widget.isOriginals ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}' : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
                         ),
                         fit: BoxFit.cover,
                         // https://api.flutter.dev/flutter/widgets/Image/frameBuilder.html

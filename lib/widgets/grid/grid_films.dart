@@ -25,7 +25,7 @@ class GridFilms extends StatelessWidget {
       children: List.generate(
         posters.length,
         (index) {
-          final filmId = posters[index].filmId;
+          // final filmId = posters[index].filmId;
           return GestureDetector(
             onTap: canClick
                 ? () {
