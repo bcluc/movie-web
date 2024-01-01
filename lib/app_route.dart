@@ -69,13 +69,14 @@ GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-        path: '/reset-password',
-        name: 'reset-password',
-        builder: (ctx, state) {
-          return ResetPassword(
-            url: state.uri,
-          );
-        }),
+      path: '/reset-password',
+      name: 'reset-password',
+      builder: (ctx, state) {
+        return ResetPassword(
+          url: state.uri,
+        );
+      },
+    ),
     GoRoute(
       path: '/browse',
       name: 'browse',
