@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/assets.dart';
+import 'package:movie_web/data/dynamic/profile_data.dart';
 import 'package:movie_web/main.dart';
+import 'package:movie_web/widgets/dialog/profile_dialog.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -21,7 +23,16 @@ class _MyProfileState extends State<MyProfile> {
       offset: const Offset(0, 4),
       itemBuilder: (ctx) => <PopupMenuEntry>[
         PopupMenuItem(
-          onTap: () {},
+          onTap: () async {
+            final hasChangedAvatar = await showDialog(
+              context: context,
+              builder: (ctx) => const ProfileDialog(),
+            );
+
+            if (hasChangedAvatar == true) {
+              setState(() {});
+            }
+          },
           child: Row(
             children: [
               SvgPicture.asset(
@@ -88,7 +99,7 @@ class _MyProfileState extends State<MyProfile> {
         Có thể thay thế bằng Image.network() nhưng mà nó không có hiệu ứng đẹp
         */
         child: CachedNetworkImage(
-          imageUrl: 'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/avatar/default_avt.png',
+          imageUrl: '$baseAvatarUrl${profileData['avatar_url']}?t=${DateTime.now()}',
           height: 50,
           width: 50,
           fit: BoxFit.cover,

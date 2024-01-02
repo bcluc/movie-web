@@ -54,6 +54,13 @@ class _ResetPasswordState extends State<ResetPassword> {
             password: confirmedPassword,
           ),
         );
+
+        await supabase.from('profile').update(
+          {
+            'password': confirmedPassword,
+          },
+        ).eq('id', supabase.auth.currentUser!.id);
+
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.linear,

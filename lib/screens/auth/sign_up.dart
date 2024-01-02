@@ -58,7 +58,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      final List<Map<String, dynamic>> checkDuplicate = await supabase.from('profile').select('email').eq('email', enteredEmail);
+      final List<Map<String, dynamic>> checkDuplicate =
+          await supabase.from('profile').select('email').eq('email', enteredEmail);
 
       if (checkDuplicate.isEmpty) {
         await supabase.auth.signUp(
@@ -367,7 +368,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _errorText,
                       style: errorTextStyle(
                         context,
-                        fontSize: 16,
+                        fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -53,8 +53,8 @@ class _ContentListState extends State<ContentList> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () {
+                    child: TapRegion(
+                      onTapInside: (_) {
                         Navigator.of(context).push(
                           PageTransition(
                             child: FilmDetail(filmId: film.filmId),
@@ -65,10 +65,11 @@ class _ContentListState extends State<ContentList> {
                           ),
                         );
                       },
-                      onHover: (value) {},
                       child: Image(
                         image: NetworkImage(
-                          widget.isOriginals ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}' : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
+                          widget.isOriginals
+                              ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}'
+                              : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
                         ),
                         fit: BoxFit.cover,
                         // https://api.flutter.dev/flutter/widgets/Image/frameBuilder.html

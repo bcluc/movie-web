@@ -80,7 +80,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                       key: PageStorageKey(topic),
                       title: topic.name,
                       films: topic.posters,
-                      isOriginals: topic.name == 'Chỉ có trên Netflix',
+                      isOriginals: topic.name == 'Chỉ có trên VioVid',
                     ),
                   ),
                 ),
