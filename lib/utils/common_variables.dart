@@ -5,6 +5,14 @@ final vnDateFormat = DateFormat('dd/MM/yyyy');
 
 get primaryColor => (BuildContext context) => Theme.of(context).colorScheme.primary;
 
-TextStyle errorTextStyle(BuildContext context) {
-  return TextStyle(color: Theme.of(context).colorScheme.error);
+TextStyle errorTextStyle(
+  BuildContext context, {
+  fontSize,
+  fontWeight,
+}) {
+  return TextStyle(
+    color: Theme.of(context).colorScheme.error,
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+  );
 }

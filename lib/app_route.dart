@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/main.dart';
+import 'package:movie_web/screens/auth/confirmed_sign_up.dart';
 import 'package:movie_web/screens/auth/request_recovery.dart';
 import 'package:movie_web/screens/auth/reset_password.dart';
 import 'package:movie_web/screens/auth/sign_up.dart';
@@ -47,7 +48,27 @@ GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/sign-up',
       name: 'sign-up',
-      builder: (ctx, state) => const SignUpScreen(),
+      builder: (ctx, state) {
+        final parameter = state.uri.queryParameters;
+        return SignUpScreen(
+          initEmail: parameter['initEmail'],
+        );
+      },
+      redirect: (context, state) {
+        if (supabase.auth.currentSession != null) {
+          return '/browse';
+        }
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/cofirmed-sign-up',
+      name: 'cofirmed-sign-up',
+      builder: (ctx, state) {
+        return ConfirmedSignUp(
+          url: state.uri,
+        );
+      },
       redirect: (context, state) {
         if (supabase.auth.currentSession != null) {
           return '/browse';

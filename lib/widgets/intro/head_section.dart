@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/assets.dart';
+import 'package:movie_web/utils/common_variables.dart';
+import 'package:movie_web/utils/validate_email.dart';
 
 class HeadSection extends StatefulWidget {
   const HeadSection({super.key});
@@ -17,7 +19,16 @@ class _HeadSectionState extends State<HeadSection> {
 
   bool _isEmailValid = true;
 
-  void _submitEmailToRegister() {}
+  void _submitEmailToRegister() {
+    final enteredEmail = _emailController.text.trim();
+
+    _isEmailValid = validateEmail(enteredEmail);
+    if (_isEmailValid) {
+      context.go('/sign-up?initEmail=$enteredEmail');
+    } else {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +112,23 @@ class _HeadSectionState extends State<HeadSection> {
                       filled: true,
                       fillColor: const Color.fromARGB(87, 0, 0, 0),
                       hintText: 'Email',
-                      errorText: _isEmailValid ? null : 'Email không hợp lệ',
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor(context),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      errorText: _isEmailValid
+                          ? null
+                          : _emailController.text.isEmpty
+                              ? 'Bạn hãy nhập Email nhé'
+                              : 'Email không hợp lệ',
+                      errorStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        backgroundColor: Colors.white,
+                      ),
                       hintStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white),
@@ -112,6 +139,7 @@ class _HeadSectionState extends State<HeadSection> {
                     style: const TextStyle(color: Colors.white),
                     autocorrect: false,
                     enableSuggestions: false,
+                    onEditingComplete: _submitEmailToRegister,
                   ),
                 ),
                 const Gap(20),

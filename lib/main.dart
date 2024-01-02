@@ -48,8 +48,7 @@ Future<void> main() async {
 
 final supabase = Supabase.instance.client;
 const tmdbApiKey = 'a29284b32c092cc59805c9f5513d3811';
-const baseAvatarUrl =
-    'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/avatar/';
+const baseAvatarUrl = 'https://kpaxjjmelbqpllxenpxz.supabase.co/storage/v1/object/public/avatar/';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

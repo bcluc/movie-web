@@ -6,7 +6,6 @@ import 'package:movie_web/main.dart';
 import 'package:movie_web/models/poster.dart';
 import 'package:movie_web/widgets/grid/grid_films.dart';
 import 'package:movie_web/widgets/grid/grid_shimmer.dart';
-import 'package:shimmer/shimmer.dart';
 
 class FilmsByGenreDialog extends StatefulWidget {
   const FilmsByGenreDialog({
@@ -27,10 +26,7 @@ class _FilmsByGenreDialogState extends State<FilmsByGenreDialog> {
   late final _futureFilms = _fetchFilmsOnDemand();
 
   Future<void> _fetchFilmsOnDemand() async {
-    final List<dynamic> postersData = await supabase
-        .from('film_genre')
-        .select('film(id, poster_path)')
-        .eq('genre_id', widget.genreId);
+    final List<dynamic> postersData = await supabase.from('film_genre').select('film(id, poster_path)').eq('genre_id', widget.genreId);
 
     for (var element in postersData) {
       _posters.add(
