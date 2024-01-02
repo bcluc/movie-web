@@ -23,7 +23,10 @@ class _NewHotDialogState extends State<NewHotDialog> {
   late final _futureNotificationNewFilms = _fetchNotificationNewFilms();
 
   Future<void> _fetchNotificationNewFilms() async {
-    _notificationFilms = await supabase.from('notification').select('created_at, film(id, name, backdrop_path, overview, content_rating)').order('created_at', ascending: false);
+    _notificationFilms = await supabase
+        .from('notification')
+        .select('created_at, film(id, name, backdrop_path, overview, content_rating)')
+        .order('created_at', ascending: false);
   }
 
   @override
@@ -36,10 +39,14 @@ class _NewHotDialogState extends State<NewHotDialog> {
           table: 'notification',
           event: PostgresChangeEvent.insert,
           callback: (payload) async {
-            final newNotificationFilm = await supabase.from('film').select('id, name, backdrop_path, overview, content_rating').eq('id', payload.newRecord['film_id']).single();
+            final newNotificationFilm = await supabase
+                .from('film')
+                .select('id, name, backdrop_path, overview, content_rating')
+                .eq('id', payload.newRecord['film_id'])
+                .single();
 
             // insert underlying data
-            _notificationFilms!.insert(
+            _notificationFilms.insert(
               0,
               {
                 'created_at': payload.newRecord['created_at'],
@@ -63,17 +70,17 @@ class _NewHotDialogState extends State<NewHotDialog> {
           event: PostgresChangeEvent.delete,
           callback: (payload) async {
             final removedItemId = payload.oldRecord['created_at'];
-            final index = _notificationFilms!.indexWhere(
+            final index = _notificationFilms.indexWhere(
               (element) => element['created_at'] == removedItemId,
             );
 
             final deleteItem = NotificationNewFilm(
-              uploadDate: _notificationFilms![index]['created_at'],
-              id: _notificationFilms![index]['film']['id'],
-              name: _notificationFilms![index]['film']['name'],
-              backdropPath: _notificationFilms![index]['film']['backdrop_path'],
-              overview: _notificationFilms![index]['film']['overview'],
-              contentRating: _notificationFilms![index]['film']['content_rating'],
+              uploadDate: _notificationFilms[index]['created_at'],
+              id: _notificationFilms[index]['film']['id'],
+              name: _notificationFilms[index]['film']['name'],
+              backdropPath: _notificationFilms[index]['film']['backdrop_path'],
+              overview: _notificationFilms[index]['film']['overview'],
+              contentRating: _notificationFilms[index]['film']['content_rating'],
             );
 
             _notificationListKey.currentState!.removeItem(
@@ -87,7 +94,7 @@ class _NewHotDialogState extends State<NewHotDialog> {
             );
 
             // remove underlying data
-            _notificationFilms!.removeAt(index);
+            _notificationFilms.removeAt(index);
           },
         )
         .subscribe();
@@ -142,6 +149,7 @@ class _NewHotDialogState extends State<NewHotDialog> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return buildSkeletonLoading();
                 }
+                //
                 return Expanded(
                   child: AnimatedList(
                     key: _notificationListKey,
@@ -157,9 +165,11 @@ class _NewHotDialogState extends State<NewHotDialog> {
                           uploadDate: _notificationFilms[index]['created_at'],
                           id: _notificationFilms[index]['film']['id'],
                           name: _notificationFilms[index]['film']['name'],
-                          backdropPath: _notificationFilms[index]['film']['backdrop_path'],
+                          backdropPath: _notificationFilms[index]['film']
+                              ['backdrop_path'],
                           overview: _notificationFilms[index]['film']['overview'],
-                          contentRating: _notificationFilms[index]['film']['content_rating'],
+                          contentRating: _notificationFilms[index]['film']
+                              ['content_rating'],
                         ),
                       );
                     },
@@ -174,69 +184,71 @@ class _NewHotDialogState extends State<NewHotDialog> {
   }
 
   Widget buildSkeletonLoading() {
-    return const Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: 20, left: 10, right: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SkeletonLoading(height: 71, width: 49),
-              SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SkeletonLoading(height: 174, width: double.infinity),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SkeletonLoading(height: 29, width: double.infinity),
-                        ),
-                        SizedBox(width: 20),
-                        SkeletonLoading(height: 29, width: 32),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    SkeletonLoading(height: 80, width: double.infinity),
-                  ],
-                ),
-              )
-            ],
+    return Expanded(
+      child: ListView(
+        children: const [
+          Padding(
+            padding: EdgeInsets.only(bottom: 20, left: 10, right: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonLoading(height: 71, width: 49),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SkeletonLoading(height: 174, width: double.infinity),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SkeletonLoading(height: 29, width: double.infinity),
+                          ),
+                          SizedBox(width: 20),
+                          SkeletonLoading(height: 29, width: 32),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      SkeletonLoading(height: 80, width: double.infinity),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20, left: 10, right: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SkeletonLoading(height: 71, width: 49),
-              SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SkeletonLoading(height: 174, width: double.infinity),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SkeletonLoading(height: 29, width: double.infinity),
-                        ),
-                        SizedBox(width: 20),
-                        SkeletonLoading(height: 29, width: 32),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    SkeletonLoading(height: 80, width: double.infinity),
-                  ],
-                ),
-              )
-            ],
-          ),
-        )
-      ],
+          Padding(
+            padding: EdgeInsets.only(bottom: 20, left: 10, right: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonLoading(height: 71, width: 49),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SkeletonLoading(height: 174, width: double.infinity),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SkeletonLoading(height: 29, width: double.infinity),
+                          ),
+                          SizedBox(width: 20),
+                          SkeletonLoading(height: 29, width: 32),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      SkeletonLoading(height: 80, width: double.infinity),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -317,8 +329,8 @@ class NotificationNewFilm extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 10,
-                        right: 10,
+                        bottom: 10,
+                        left: 10,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
@@ -327,6 +339,10 @@ class NotificationNewFilm extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
                             color: Colors.black,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 1,
+                            ),
                           ),
                           child: Text(
                             contentRating,

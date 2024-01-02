@@ -4,7 +4,11 @@ final profileData = {};
 
 Future<void> fetchProfileData() async {
   final userId = supabase.auth.currentUser!.id;
-  final data = await supabase.from('profile').select('password, full_name, dob, avatar_url, my_list').eq('id', userId).single();
+  final data = await supabase
+      .from('profile')
+      .select('password, full_name, dob, avatar_url, my_list')
+      .eq('id', userId)
+      .single();
 
   // List.from() constructor can be used to down-cast a List
   List<String> myList = List.from(data['my_list']);
@@ -19,5 +23,5 @@ Future<void> fetchProfileData() async {
     },
   );
 
-  print('My List: ${profileData['my_list']}');
+  // print('My List: ${profileData['my_list']}');
 }

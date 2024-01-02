@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:movie_web/data/static/faq_data.dart';
-import 'package:movie_web/widgets/faq_button.dart';
+import 'package:movie_web/widgets/film_detail/faq_button.dart';
 
 class FAQSection extends StatefulWidget {
   const FAQSection({super.key});
@@ -16,13 +16,6 @@ class _FAQSectionState extends State<FAQSection> {
   final _emailController = TextEditingController();
 
   bool _isEmailValid = true;
-
-  bool _validateEmail(String email) {
-    // Define a regular expression for a valid email address
-    final RegExp emailRegExp = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
-
-    return emailRegExp.hasMatch(email);
-  }
 
   void _submitEmailToRegister() {}
 

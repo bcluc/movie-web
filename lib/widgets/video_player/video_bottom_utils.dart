@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_web/models/episode.dart';
-import 'package:movie_web/models/season.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
-import 'package:movie_web/widgets/film_detail/list_episodes.dart';
 import 'package:movie_web/widgets/video_player/video_player_choose_episode.dart';
 import 'package:video_player/video_player.dart';
 
@@ -78,7 +76,8 @@ class _VideoBottomUtilsState extends State<VideoBottomUtils> {
     final seasons = filmData['seasons'];
 
     // print("_VideoBottomUtilsState rebuild");
-    final totalEpisodes = seasons.fold(0, (previousValue, season) => previousValue + season.episodes.length);
+    final totalEpisodes = seasons.fold(
+        0, (previousValue, season) => previousValue + season.episodes.length);
 
     final nextEpisode = findNextEpisode();
 
@@ -199,7 +198,7 @@ class _VideoBottomUtilsState extends State<VideoBottomUtils> {
             ),
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

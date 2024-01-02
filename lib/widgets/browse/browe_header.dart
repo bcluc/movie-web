@@ -2,10 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:movie_web/assets.dart';
-import 'package:movie_web/cubits/video_slider/video_slider_cubit.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:video_player/video_player.dart';
@@ -42,12 +40,16 @@ class _BrowseHeaderState extends State<BrowseHeader> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _videoController.value.isPlaying ? _videoController.pause() : _videoController.play(),
+      onTap: () => _videoController.value.isPlaying
+          ? _videoController.pause()
+          : _videoController.play(),
       child: Stack(
         alignment: Alignment.bottomLeft,
         children: [
           AspectRatio(
-            aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
+            aspectRatio: _videoController.value.isInitialized
+                ? _videoController.value.aspectRatio
+                : 16 / 9,
             child: _videoController.value.isInitialized
                 ? VideoPlayer(_videoController)
                 : Image.asset(
@@ -59,7 +61,9 @@ class _BrowseHeaderState extends State<BrowseHeader> {
             left: 0,
             right: 0,
             child: AspectRatio(
-              aspectRatio: _videoController.value.isInitialized ? _videoController.value.aspectRatio : 16 / 9,
+              aspectRatio: _videoController.value.isInitialized
+                  ? _videoController.value.aspectRatio
+                  : 16 / 9,
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -147,7 +151,7 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       ),
                       onPressed: () {
-                        print('More Info Violet Evrg');
+                        // print('More Info Violet Evrg');
                         Navigator.of(context).push(
                           PageTransition(
                             child: const FilmDetail(filmId: '533514'),
@@ -176,7 +180,9 @@ class _BrowseHeaderState extends State<BrowseHeader> {
                         color: Colors.white,
                         iconSize: 30.0,
                         onPressed: () => setState(() {
-                          _isMuted ? _videoController.setVolume(100) : _videoController.setVolume(0);
+                          _isMuted
+                              ? _videoController.setVolume(100)
+                              : _videoController.setVolume(0);
                           _isMuted = _videoController.value.volume == 0;
                         }),
                       ).animate().fade(),

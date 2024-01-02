@@ -1,8 +1,6 @@
-import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
-import 'package:movie_web/cubits/volume/volume_slider_cubit.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/screens/auth/request_recovery.dart';
 import 'package:movie_web/screens/auth/reset_password.dart';

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/cubits/my_list/my_list_cubit.dart';
 import 'package:movie_web/main.dart';
-import 'package:page_transition/page_transition.dart';
 
 class FavoriteButton extends StatelessWidget {
   const FavoriteButton(
@@ -21,7 +20,9 @@ class FavoriteButton extends StatelessWidget {
       final currentMyList = context.read<MyListCubit>().state;
 
       await supabase.from('profile').update({
-        'my_list': isInMyList ? currentMyList.where((element) => element != filmId).toList() : [...currentMyList, filmId],
+        'my_list': isInMyList
+            ? currentMyList.where((element) => element != filmId).toList()
+            : [...currentMyList, filmId],
       }).eq('id', userId);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -33,12 +34,16 @@ class FavoriteButton extends StatelessWidget {
       return;
     }
 
-    isInMyList ? context.read<MyListCubit>().removeFilms(filmId) : context.read<MyListCubit>().addFilms(filmId);
+    isInMyList
+        ? context.read<MyListCubit>().removeFilms(filmId)
+        : context.read<MyListCubit>().addFilms(filmId);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: isInMyList ? const Text('Đã xoá vào Danh sách của tôi') : const Text('Đã thêm vào Danh sách của tôi'),
+        content: isInMyList
+            ? const Text('Đã xoá vào Danh sách của tôi')
+            : const Text('Đã thêm vào Danh sách của tôi'),
         duration: const Duration(seconds: 3),
         action: isInMyList
             ? null

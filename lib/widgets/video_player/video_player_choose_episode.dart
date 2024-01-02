@@ -176,6 +176,5 @@ class _VideoPlayerChooseEpisodeState extends State<VideoPlayerChooseEpisode> {
         ],
       ),
     );
-    ;
   }
 }

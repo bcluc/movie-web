@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:movie_web/assets.dart';
@@ -10,7 +8,6 @@ import 'package:movie_web/assets.dart';
 import 'package:movie_web/cubits/video_play_control/video_play_control.dart';
 import 'package:movie_web/cubits/video_slider/video_slider_cubit.dart';
 import 'package:movie_web/models/episode.dart';
-import 'package:movie_web/models/season.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:movie_web/widgets/video_player/control_buttons.dart';
 import 'package:movie_web/widgets/video_player/slider_video.dart';
@@ -65,11 +62,15 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
   }
 
   void _onVideoPlayerPositionChanged() {
-    context.read<VideoSliderCubit>().setProgress(_videoPlayerController.value.position.inMilliseconds / _videoPlayerController.value.duration.inMilliseconds);
+    context.read<VideoSliderCubit>().setProgress(
+        _videoPlayerController.value.position.inMilliseconds /
+            _videoPlayerController.value.duration.inMilliseconds);
   }
 
   void _onVideoPlayerStatusChanged() {
-    _videoPlayerController.value.isPlaying ? context.read<VideoPlayControlCubit>().play() : context.read<VideoPlayControlCubit>().pause();
+    _videoPlayerController.value.isPlaying
+        ? context.read<VideoPlayControlCubit>().play()
+        : context.read<VideoPlayControlCubit>().pause();
   }
 
   void setVideoController(Episode episode) {
@@ -127,7 +128,9 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
               color: Colors.black,
               alignment: Alignment.center,
               child: AspectRatio(
-                aspectRatio: _videoPlayerController.value.isInitialized ? _videoPlayerController.value.aspectRatio : 16 / 9,
+                aspectRatio: _videoPlayerController.value.isInitialized
+                    ? _videoPlayerController.value.aspectRatio
+                    : 16 / 9,
                 child: _videoPlayerController.value.isInitialized
                     ? VideoPlayer(_videoPlayerController)
                     : const Center(
@@ -239,8 +242,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                         _videoPlayerController,
                         _startCountdownToDismissControls,
                         () => _controlsTimer.cancel(),
-                        () => _videoPlayerController.removeListener(_onVideoPlayerPositionChanged),
-                        () => _videoPlayerController.addListener(_onVideoPlayerPositionChanged),
+                        () => _videoPlayerController
+                            .removeListener(_onVideoPlayerPositionChanged),
+                        () => _videoPlayerController
+                            .addListener(_onVideoPlayerPositionChanged),
                       ),
                       const Gap(10),
                       VideoBottomUtils(
@@ -257,8 +262,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                             Khi đó,
                             _videoPlayerController.value.duration.inMilliseconds = 0; => Lỗi
                             */
-                          _videoPlayerController.removeListener(_onVideoPlayerPositionChanged);
-                          _videoPlayerController.removeListener(_onVideoPlayerStatusChanged);
+                          _videoPlayerController
+                              .removeListener(_onVideoPlayerPositionChanged);
+                          _videoPlayerController
+                              .removeListener(_onVideoPlayerStatusChanged);
                           //
                           _videoPlayerController.dispose();
                           //

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:movie_web/main.dart';
-import 'package:movie_web/models/episode.dart';
 import 'package:movie_web/models/poster.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:movie_web/widgets/grid/grid_shimmer.dart';
@@ -42,7 +41,8 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
 
   Future<void> _fetchRecommendFilms() async {
     String type = filmData['isMovie'] ? 'movie' : 'tv';
-    String url = "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
+    String url =
+        "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       // Parse the response JSON
@@ -68,9 +68,13 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCastData() async {
-    _castData = await supabase.from('cast').select('role: character, person(id, name, profile_path, popularity)').eq('film_id', widget.filmId);
+    _castData = await supabase
+        .from('cast')
+        .select('role: character, person(id, name, profile_path, popularity)')
+        .eq('film_id', widget.filmId);
 
-    _castData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _castData
+        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String casts = '';
     // for (var element in _castData) {
@@ -88,9 +92,13 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCrewData() async {
-    _crewData = await supabase.from('crew').select('role: job, person(id, name, profile_path, popularity, gender)').eq('film_id', widget.filmId);
+    _crewData = await supabase
+        .from('crew')
+        .select('role: job, person(id, name, profile_path, popularity, gender)')
+        .eq('film_id', widget.filmId);
 
-    _crewData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _crewData
+        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String crews = '';
     // for (var element in _crewData) {

@@ -4,8 +4,8 @@ import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/cubits/my_list/my_list_cubit.dart';
 import 'package:movie_web/data/dynamic/profile_data.dart';
 import 'package:movie_web/data/dynamic/topics_data.dart';
-import 'package:movie_web/widgets/browe_header.dart';
-import 'package:movie_web/widgets/content_list.dart';
+import 'package:movie_web/widgets/browse/browe_header.dart';
+import 'package:movie_web/widgets/browse/content_list.dart';
 import 'package:movie_web/widgets/custom_app_bar/custom_app_bar.dart';
 
 class BrowseScreen extends StatefulWidget {
