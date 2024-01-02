@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_web/assets.dart';
+import 'package:movie_web/screens/search_film.dart';
 import 'package:movie_web/widgets/dialog/new_hot.dart';
 import 'package:movie_web/widgets/custom_app_bar/my_profile.dart';
+import 'package:page_transition/page_transition.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
@@ -71,15 +74,15 @@ class CustomAppBar extends StatelessWidget {
                     onPressed: () {
                       // context.read<RouteStackCubit>().push('/search_film_screen');
                       // context.read<RouteStackCubit>().printRouteStack();
-                      // Navigator.of(context).push(
-                      //   PageTransition(
-                      //     child: const SearchFilmScreen(),
-                      //     type: PageTransitionType.rightToLeft,
-                      //     duration: 300.ms,
-                      //     reverseDuration: 300.ms,
-                      //     settings: const RouteSettings(name: '/search_film_screen'),
-                      //   ),
-                      // );
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: const SearchFilmScreen(),
+                          type: PageTransitionType.fade,
+                          duration: 300.ms,
+                          reverseDuration: 300.ms,
+                          settings: const RouteSettings(name: '/search_film_screen'),
+                        ),
+                      );
                     },
                     style: IconButton.styleFrom(foregroundColor: Colors.white),
                     icon: const Icon(
