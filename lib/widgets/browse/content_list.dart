@@ -70,52 +70,53 @@ class _ContentListState extends State<ContentList> {
                           ),
                         );
                       },
-                      child: Image(
-                        image: NetworkImage(
-                          widget.isOriginals
-                              ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}'
-                              : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
-                        ),
-                        fit: BoxFit.cover,
-                        // https://api.flutter.dev/flutter/widgets/Image/frameBuilder.html
-                        frameBuilder: (
-                          BuildContext context,
-                          Widget child,
-                          int? frame,
-                          bool wasSynchronouslyLoaded,
-                        ) {
-                          if (wasSynchronouslyLoaded) {
-                            return child;
-                          }
-                          return AnimatedOpacity(
-                            opacity: frame == null ? 0 : 1,
-                            duration: const Duration(
-                              milliseconds: 500,
-                            ), // Adjust the duration as needed
-                            curve: Curves.easeInOut,
-                            child: child, // Adjust the curve as needed
-                          );
-                        },
-                        // https://api.flutter.dev/flutter/widgets/Image/loadingBuilder.html
-                        loadingBuilder: (
-                          BuildContext context,
-                          Widget child,
-                          ImageChunkEvent? loadingProgress,
-                        ) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return Center(
-                            child: SizedBox(
-                              width: widget.isOriginals ? 48 : 36,
-                              height: widget.isOriginals ? 48 : 36,
-                              child: const CircularProgressIndicator(
-                                color: Colors.grey,
-                                strokeCap: StrokeCap.round,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Image(
+                          image: NetworkImage(
+                            widget.isOriginals ? 'https://image.tmdb.org/t/p/w600_and_h900_bestv2/${film.posterPath}' : 'https://image.tmdb.org/t/p/w440_and_h660_face/${film.posterPath}',
+                          ),
+                          fit: BoxFit.cover,
+                          // https://api.flutter.dev/flutter/widgets/Image/frameBuilder.html
+                          frameBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            int? frame,
+                            bool wasSynchronouslyLoaded,
+                          ) {
+                            if (wasSynchronouslyLoaded) {
+                              return child;
+                            }
+                            return AnimatedOpacity(
+                              opacity: frame == null ? 0 : 1,
+                              duration: const Duration(
+                                milliseconds: 500,
+                              ), // Adjust the duration as needed
+                              curve: Curves.easeInOut,
+                              child: child, // Adjust the curve as needed
+                            );
+                          },
+                          // https://api.flutter.dev/flutter/widgets/Image/loadingBuilder.html
+                          loadingBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                          ) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child: SizedBox(
+                                width: widget.isOriginals ? 48 : 36,
+                                height: widget.isOriginals ? 48 : 36,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.grey,
+                                  strokeCap: StrokeCap.round,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );

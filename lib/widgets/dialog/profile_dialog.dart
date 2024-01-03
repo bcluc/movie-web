@@ -63,16 +63,16 @@ class _ProfileDialogState extends State<ProfileDialog> {
     final enteredUsername = _usernameControllber.text;
     final enteredDob = _dobController.text;
 
-    String extensionImage = "";
+    // String extensionImage = "";
 
-    if (chosenAvatar != null) {
-      // extensionImage = path.extension(chosenAvatar!.path);
-      // await supabase.storage.from('avatar').upload(
-      //       '${supabase.auth.currentUser!.email!}$extensionImage',
-      //       chosenAvatar!,
-      //       fileOptions: const FileOptions(upsert: true),
-      //     );
-    }
+    // if (chosenAvatar != null) {
+    //   extensionImage = path.extension(chosenAvatar!.path);
+    //   await supabase.storage.from('avatar').upload(
+    //         '${supabase.auth.currentUser!.email!}$extensionImage',
+    //         chosenAvatar!,
+    //         fileOptions: const FileOptions(upsert: true),
+    //       );
+    // }
 
     try {
       /*
@@ -192,8 +192,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                     children: [
                       chosenAvatar == null
                           ? CachedNetworkImage(
-                              imageUrl:
-                                  '$baseAvatarUrl${profileData['avatar_url']}?t=${DateTime.now()}',
+                              imageUrl: '$baseAvatarUrl${profileData['avatar_url']}?t=${DateTime.now()}',
                               height: 260,
                               width: 260,
                               fit: BoxFit.cover,
@@ -278,8 +277,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                             style: const TextStyle(color: Colors.white),
                             autocorrect: false,
                             enableSuggestions: false, // No work+
-                            keyboardType:
-                                TextInputType.emailAddress, // Trick: disable suggestions
+                            keyboardType: TextInputType.emailAddress, // Trick: disable suggestions
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Bạn chưa nhập Tên';
@@ -494,8 +492,7 @@ class _ChangePasswordComposeState extends State<ChangePasswordCompose> {
                     if (value.length < 6) {
                       return 'Mật khẩu gồm 6 ký tự trở lên.';
                     }
-                    if (_oldPasswordController.text == profileData['password'] &&
-                        value == profileData['password']) {
+                    if (_oldPasswordController.text == profileData['password'] && value == profileData['password']) {
                       return 'Mật khẩu mới không được trùng với mật khẩu cũ.';
                     }
                     return null;

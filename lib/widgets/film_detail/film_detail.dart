@@ -69,8 +69,7 @@ class _FilmDetailState extends State<FilmDetail> {
       reviews: [],
     );
     // print('backdrop_path = ${_film!['backdrop_path']}');
-    final List<dynamic> genresData =
-        await supabase.from('film_genre').select('genre(*)').eq('film_id', widget.filmId);
+    final List<dynamic> genresData = await supabase.from('film_genre').select('genre(*)').eq('film_id', widget.filmId);
 
     for (var genreRow in genresData) {
       _film.genres.add(
@@ -83,12 +82,8 @@ class _FilmDetailState extends State<FilmDetail> {
 
     // print(_film.genres.length);
 
-    final List<dynamic> seasonsData = await supabase
-        .from('season')
-        .select('id, name, episode(*)')
-        .eq('film_id', widget.filmId)
-        .order('id', ascending: true)
-        .order('order', referencedTable: 'episode', ascending: true);
+    final List<dynamic> seasonsData =
+        await supabase.from('season').select('id, name, episode(*)').eq('film_id', widget.filmId).order('id', ascending: true).order('order', referencedTable: 'episode', ascending: true);
 
     for (var seasonRow in seasonsData) {
       final season = Season(
@@ -117,14 +112,7 @@ class _FilmDetailState extends State<FilmDetail> {
       _film.seasons.add(season);
     }
 
-    filmData['seasons'] = _film.seasons;
-    filmData['currentSeasonIndex'] = 0;
-    filmData['isMovie'] = _film.seasons[0].name == '';
-
-    final List<dynamic> reviewsData = await supabase
-        .from('review')
-        .select('user_id, star, created_at, profile(full_name, avatar_url)')
-        .eq('film_id', widget.filmId);
+    final List<dynamic> reviewsData = await supabase.from('review').select('user_id, star, created_at, profile(full_name, avatar_url)').eq('film_id', widget.filmId);
 
     // print(reviewsData);
 
@@ -141,6 +129,12 @@ class _FilmDetailState extends State<FilmDetail> {
     }
 
     _film.reviews.sort((a, b) => b.createAt.compareTo(a.createAt));
+
+    filmData['filmId'] = _film.id;
+    filmData['seasons'] = _film.seasons;
+    filmData['currentSeasonIndex'] = 0;
+    filmData['isMovie'] = _film.seasons[0].name == '';
+    filmData['reviews'] = _film.reviews;
   }
 
   @override
@@ -151,8 +145,6 @@ class _FilmDetailState extends State<FilmDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.sizeOf(context);
-
     return WillPopScope(
       // Đã test - Không sửa
       onWillPop: () async {
@@ -183,9 +175,7 @@ class _FilmDetailState extends State<FilmDetail> {
 
                 double voteAverage = 0;
                 if (_film.reviews.isNotEmpty) {
-                  voteAverage = _film.reviews.fold(
-                          0, (previousValue, review) => previousValue + review.star) /
-                      _film.reviews.length;
+                  voteAverage = _film.reviews.fold(0, (previousValue, review) => previousValue + review.star) / _film.reviews.length;
 
                   // print(voteAverage);
                 }
@@ -257,8 +247,7 @@ class _FilmDetailState extends State<FilmDetail> {
                             right: 0,
                             width: 90,
                             child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF696A6A).withOpacity(0.7),
                                 border: const Border(
@@ -315,12 +304,10 @@ class _FilmDetailState extends State<FilmDetail> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
+                                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                                       ),
                                       onPressed: () {},
-                                      icon: const Icon(Icons.play_arrow_rounded,
-                                          size: 30.0),
+                                      icon: const Icon(Icons.play_arrow_rounded, size: 30.0),
                                       label: const Text(
                                         'Phát',
                                         style: TextStyle(
@@ -358,8 +345,7 @@ class _FilmDetailState extends State<FilmDetail> {
                                         tooltip: '',
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color:
-                                                const Color(0xFF444444).withOpacity(0.9),
+                                            color: const Color(0xFF444444).withOpacity(0.9),
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           padding: const EdgeInsets.symmetric(
@@ -369,10 +355,7 @@ class _FilmDetailState extends State<FilmDetail> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                _film
-                                                    .seasons[
-                                                        filmData['currentSeasonIndex']]
-                                                    .name,
+                                                _film.seasons[filmData['currentSeasonIndex']].name,
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18,
@@ -398,9 +381,7 @@ class _FilmDetailState extends State<FilmDetail> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      voteAverage == 0
-                                          ? 'Chưa có đánh giá'
-                                          : 'Bình chọn: ${(voteAverage).toStringAsFixed(1)} ',
+                                      voteAverage == 0 ? 'Chưa có đánh giá' : 'Bình chọn: ${(voteAverage).toStringAsFixed(1)} ',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -461,20 +442,13 @@ class _FilmDetailState extends State<FilmDetail> {
                                             },
                                             child: MouseRegion(
                                               cursor: SystemMouseCursors.click,
-                                              onEnter: (_) =>
-                                                  setStateGenre(() => isHover = true),
-                                              onExit: (_) =>
-                                                  setStateGenre(() => isHover = false),
+                                              onEnter: (_) => setStateGenre(() => isHover = true),
+                                              onExit: (_) => setStateGenre(() => isHover = false),
                                               child: Text(
-                                                _film.genres[index].name +
-                                                    (index == _film.genres.length - 1
-                                                        ? ''
-                                                        : ', '),
+                                                _film.genres[index].name + (index == _film.genres.length - 1 ? '' : ', '),
                                                 style: TextStyle(
                                                   color: const Color(0xFFBEBEBE),
-                                                  decoration: isHover
-                                                      ? TextDecoration.underline
-                                                      : null,
+                                                  decoration: isHover ? TextDecoration.underline : null,
                                                   decorationColor: Colors.white,
                                                 ),
                                               ),
@@ -514,16 +488,14 @@ class _FilmDetailState extends State<FilmDetail> {
                                 }),
                                 child: Text(
                                   _isExpandOverview ? 'Ẩn bớt' : 'Xem thêm',
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic),
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
                                 ),
                               ),
                             const Gap(4),
                             BottomTab(
                               /* truyền filmId vào để lấy được Những phim đề xuất của filmId này */
                               filmId: _film.id,
+                              onReviewHasChanged: () => setState(() {}),
                             ),
                             const Gap(20),
                           ],
@@ -555,8 +527,7 @@ class _FilmDetailState extends State<FilmDetail> {
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.white.withOpacity(0.4),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,

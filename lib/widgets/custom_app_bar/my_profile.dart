@@ -72,7 +72,7 @@ class _MyProfileState extends State<MyProfile> {
                   ),
                   behavior: SnackBarBehavior.floating,
                   duration: Duration(seconds: 3),
-                  width: 300,
+                  width: 400,
                 ),
               );
             }

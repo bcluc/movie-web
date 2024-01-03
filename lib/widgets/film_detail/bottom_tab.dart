@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/models/poster.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
+import 'package:movie_web/widgets/film_detail/film_reviews.dart';
 import 'package:movie_web/widgets/grid/grid_shimmer.dart';
 import 'package:movie_web/widgets/film_detail/list_episodes.dart';
 import 'package:movie_web/widgets/grid/grid_films.dart';
@@ -16,9 +17,11 @@ class BottomTab extends StatefulWidget {
   const BottomTab({
     super.key,
     required this.filmId,
+    required this.onReviewHasChanged,
   });
 
   final String filmId;
+  final void Function() onReviewHasChanged;
 
   @override
   State<BottomTab> createState() => _BottomTabState();
@@ -41,8 +44,7 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
 
   Future<void> _fetchRecommendFilms() async {
     String type = filmData['isMovie'] ? 'movie' : 'tv';
-    String url =
-        "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
+    String url = "https://api.themoviedb.org/3/$type/${widget.filmId}/recommendations?api_key=$tmdbApiKey";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       // Parse the response JSON
@@ -68,13 +70,9 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCastData() async {
-    _castData = await supabase
-        .from('cast')
-        .select('role: character, person(id, name, profile_path, popularity)')
-        .eq('film_id', widget.filmId);
+    _castData = await supabase.from('cast').select('role: character, person(id, name, profile_path, popularity)').eq('film_id', widget.filmId);
 
-    _castData
-        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _castData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String casts = '';
     // for (var element in _castData) {
@@ -92,13 +90,9 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCrewData() async {
-    _crewData = await supabase
-        .from('crew')
-        .select('role: job, person(id, name, profile_path, popularity, gender)')
-        .eq('film_id', widget.filmId);
+    _crewData = await supabase.from('crew').select('role: job, person(id, name, profile_path, popularity, gender)').eq('film_id', widget.filmId);
 
-    _crewData
-        .sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
+    _crewData.sort((a, b) => b['person']['popularity'].compareTo(a['person']['popularity']));
 
     // String crews = '';
     // for (var element in _crewData) {
@@ -112,7 +106,7 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 3 + (filmData['isMovie'] ? 0 : 1),
+      length: 4 + (filmData['isMovie'] ? 0 : 1),
       vsync: this,
       initialIndex: 0,
     );
@@ -172,6 +166,9 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
             ),
             const Tab(
               text: 'Đề xuất',
+            ),
+            const Tab(
+              text: 'Đánh giá',
             ),
           ],
         ),
@@ -242,6 +239,7 @@ class _BottomTabState extends State<BottomTab> with TickerProviderStateMixin {
                   );
                 },
               ),
+            4 => FilmReviews(onReviewHasChanged: widget.onReviewHasChanged),
             _ => null,
           },
         ),
