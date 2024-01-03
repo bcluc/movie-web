@@ -114,7 +114,9 @@ class _FilmReviewsState extends State<FilmReviews> {
 
     double voteAverage = 0;
     if (reviews.isNotEmpty) {
-      voteAverage = reviews.fold(0, (previousValue, review) => previousValue + review.star) / reviews.length;
+      voteAverage =
+          reviews.fold(0, (previousValue, review) => previousValue + review.star) /
+              reviews.length;
 
       // print(voteAverage);
     }
@@ -161,7 +163,7 @@ class _FilmReviewsState extends State<FilmReviews> {
           ),
         ),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (voteAverage > 0) ...[
               Text(
@@ -179,7 +181,6 @@ class _FilmReviewsState extends State<FilmReviews> {
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  height: 3.5,
                 ),
               ),
             ] else
@@ -195,7 +196,6 @@ class _FilmReviewsState extends State<FilmReviews> {
             SizedBox(
               width: 450,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),

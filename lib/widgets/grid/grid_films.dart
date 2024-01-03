@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/models/poster.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:page_transition/page_transition.dart';
@@ -32,62 +34,13 @@ class GridFilms extends StatelessWidget {
           return GestureDetector(
             onTap: canClick
                 ? () {
-                    // String? prior =
-                    //     context.read<RouteStackCubit>().findPrior('/film_detail@$filmId');
-                    // // print('prior = $prior');
-                    // /*
-                    // prior là route trước của /film_detail@$filmId
-                    // nếu /film_detail@$filmId có trong RouteStack
-                    // */
-
-                    // if (prior != null) {
-                    //   // Trong Stack đã từng di chuyển tới Phim này rồi
-                    //   Navigator.of(context).pushAndRemoveUntil(
-                    //     PageTransition(
-                    //       child: FilmDetail(
-                    //         filmId: filmId,
-                    //       ),
-                    //       type: PageTransitionType.rightToLeft,
-                    //       duration: 300.ms,
-                    //       reverseDuration: 300.ms,
-                    //       settings: RouteSettings(name: '/film_detail@$filmId'),
-                    //     ),
-                    //     (route) {
-                    //       // print(route.settings.name);
-                    //       if (route.settings.name == prior) {
-                    //         /*
-                    //         Khi đã gặp prior route của /film_detail@$filmId
-                    //         Thì push /film_detail@$filmId vào Stack
-                    //         */
-                    //         context.read<RouteStackCubit>().push('/film_detail@$filmId');
-                    //         context.read<RouteStackCubit>().printRouteStack();
-                    //         return true;
-                    //       } else {
-                    //         context.read<RouteStackCubit>().pop();
-                    //         return false;
-                    //       }
-                    //     },
-                    //   );
-                    // } else {
-                    //   // Chưa từng di chuyển tới Phim này
-                    //   context.read<RouteStackCubit>().push('/film_detail@$filmId');
-                    //   context.read<RouteStackCubit>().printRouteStack();
-                    //   Navigator.of(context).push(
-                    //     PageTransition(
-                    //       child: FilmDetail(
-                    //         filmId: filmId,
-                    //       ),
-                    //       type: PageTransitionType.rightToLeft,
-                    //       duration: 300.ms,
-                    //       reverseDuration: 300.ms,
-                    //       settings: RouteSettings(name: '/film_detail@$filmId'),
-                    //     ),
-                    //   );
-                    // }
                     Navigator.of(context).push(
                       PageTransition(
-                        child: FilmDetail(
-                          filmId: filmId,
+                        child: BlocProvider(
+                          create: (context) => AppBarCubit(),
+                          child: FilmDetail(
+                            filmId: filmId,
+                          ),
                         ),
                         type: PageTransitionType.rightToLeft,
                         duration: 300.ms,

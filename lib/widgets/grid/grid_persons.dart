@@ -32,64 +32,6 @@ class GridPersons extends StatelessWidget {
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
               onTap: () {
-                // String? prior = context
-                //     .read<RouteStackCubit>()
-                //     .findPrior('/person_detail@${personsData[index]['person']['id']}');
-                // /*
-                // prior là route trước của /person_detail@${personsData[index]['person']['id']}
-                // nếu /person_detail@${personsData[index]['person']['id']} có trong RouteStack
-                // */
-                // if (prior != null) {
-                //   // Trong Stack đã từng di chuyển tới Person này rồi
-                //   Navigator.of(context).pushAndRemoveUntil(
-                //     PageTransition(
-                //       child: PersonDetail(
-                //         personId: personsData[index]['person']['id'],
-                //         isCast: isCast,
-                //       ),
-                //       type: PageTransitionType.rightToLeft,
-                //       duration: 240.ms,
-                //       reverseDuration: 240.ms,
-                //       settings: RouteSettings(
-                //           name: '/person_detail@${personsData[index]['person']['id']}'),
-                //     ),
-                //     (route) {
-                //       if (route.settings.name == prior) {
-                //         /*
-                //         Khi đã gặp prior route của /person_detail@${personsData[index]['person']['id']}
-                //         Thì push /person_detail@${personsData[index]['person']['id']} vào Stack
-                //         */
-                //         context
-                //             .read<RouteStackCubit>()
-                //             .push('/person_detail@${personsData[index]['person']['id']}');
-                //         context.read<RouteStackCubit>().printRouteStack();
-                //         return true;
-                //       } else {
-                //         context.read<RouteStackCubit>().pop();
-                //         return false;
-                //       }
-                //     },
-                //   );
-                // } else {
-                //   // Chưa từng di chuyển tới Person này
-                //   context
-                //       .read<RouteStackCubit>()
-                //       .push('/person_detail@${personsData[index]['person']['id']}');
-                //   context.read<RouteStackCubit>().printRouteStack();
-                //   Navigator.of(context).push(
-                //     PageTransition(
-                //       child: PersonDetail(
-                //         personId: personsData[index]['person']['id'],
-                //         isCast: isCast,
-                //       ),
-                //       type: PageTransitionType.rightToLeft,
-                //       duration: 240.ms,
-                //       reverseDuration: 240.ms,
-                //       settings: RouteSettings(
-                //           name: '/person_detail@${personsData[index]['person']['id']}'),
-                //     ),
-                //   );
-                // }
                 showDialog(
                   context: context,
                   builder: (ctx) => PersonDetailDialog(

@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:movie_web/widgets/skeleton_loading.dart';
@@ -378,11 +380,12 @@ class NotificationNewFilm extends StatelessWidget {
                           InkWell(
                             borderRadius: BorderRadius.circular(4),
                             onTap: () {
-                              // context.read<RouteStackCubit>().push('/film_detail@$id');
-                              // context.read<RouteStackCubit>().printRouteStack();
                               Navigator.of(context).push(
                                 PageTransition(
-                                  child: FilmDetail(filmId: id),
+                                  child: BlocProvider(
+                                    create: (context) => AppBarCubit(),
+                                    child: FilmDetail(filmId: id),
+                                  ),
                                   type: PageTransitionType.fade,
                                   settings: RouteSettings(name: '/film_detail@$id'),
                                 ),
