@@ -10,8 +10,6 @@ import 'package:movie_web/main.dart';
 import 'package:movie_web/utils/common_variables.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:path/path.dart' as path;
-
 class ProfileDialog extends StatefulWidget {
   const ProfileDialog({super.key});
 

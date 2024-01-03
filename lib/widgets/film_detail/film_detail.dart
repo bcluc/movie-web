@@ -2,7 +2,9 @@ import 'dart:ui' as dart_ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/main.dart';
 import 'package:movie_web/models/episode.dart';
 import 'package:movie_web/models/film.dart';
@@ -30,6 +32,11 @@ class FilmDetail extends StatefulWidget {
 final Map<String, dynamic> filmData = {};
 
 class _FilmDetailState extends State<FilmDetail> {
+  late final ScrollController _scrollController = ScrollController()
+    ..addListener(() {
+      context.read<AppBarCubit>().setOffset(_scrollController.offset);
+    });
+
   late final Film _film;
 
   bool _isExpandOverview = false;
@@ -137,7 +144,15 @@ class _FilmDetailState extends State<FilmDetail> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.sizeOf(context);
+
     return WillPopScope(
       // Đã test - Không sửa
       onWillPop: () async {
@@ -146,408 +161,441 @@ class _FilmDetailState extends State<FilmDetail> {
         return true;
       },
       child: Scaffold(
-        body: FutureBuilder(
-          future: _futureMovie,
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        body: Stack(
+          children: [
+            FutureBuilder(
+              future: _futureMovie,
+              builder: (ctx, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text(
-                  'Có lỗi xảy ra khi truy vấn thông tin phim',
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
-            }
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'Có lỗi xảy ra khi truy vấn thông tin phim',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
 
-            double voteAverage = 0;
-            if (_film.reviews.isNotEmpty) {
-              voteAverage = _film.reviews
-                      .fold(0, (previousValue, review) => previousValue + review.star) /
-                  _film.reviews.length;
+                double voteAverage = 0;
+                if (_film.reviews.isNotEmpty) {
+                  voteAverage = _film.reviews.fold(
+                          0, (previousValue, review) => previousValue + review.star) /
+                      _film.reviews.length;
 
-              // print(voteAverage);
-            }
+                  // print(voteAverage);
+                }
 
-            final textPainter = TextPainter(
-              text: TextSpan(
-                text: _film.overview,
-                style: const TextStyle(color: Colors.white),
-              ),
-              maxLines: 4,
-              textDirection: dart_ui.TextDirection.ltr,
-            )..layout(minWidth: 0, maxWidth: MediaQuery.sizeOf(context).width);
-            final isOverflowed = textPainter.didExceedMaxLines;
+                final textPainter = TextPainter(
+                  text: TextSpan(
+                    text: _film.overview,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  maxLines: 4,
+                  textDirection: dart_ui.TextDirection.ltr,
+                )..layout(minWidth: 0, maxWidth: MediaQuery.sizeOf(context).width);
+                final isOverflowed = textPainter.didExceedMaxLines;
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
+                return SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Ink(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                'https://image.tmdb.org/t/p/original/${_film.backdropPath}',
-                              ),
-                              fit: BoxFit.cover),
-                        ),
-                        width: double.infinity,
-                        height: 9 / 16 * MediaQuery.sizeOf(context).width,
-                      ),
-                      // Layer Gradient 1
-                      Positioned.fill(
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.black54,
-                                Colors.transparent,
-                                Colors.transparent,
-                                Colors.black,
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Layer Gradient 2
-                      Positioned.fill(
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ],
-                              stops: [0, 0.5],
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.centerRight,
-                            ),
-                          ),
-                        ),
-                      ),
-                      /* Back Button */
-                      Positioned(
-                        top: 50,
-                        left: 50,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.white.withOpacity(0.2),
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.arrow_back_rounded,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black,
-                                    offset: Offset(2.0, 4.0),
-                                    blurRadius: 6.0,
+                      Stack(
+                        children: [
+                          Ink(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    'https://image.tmdb.org/t/p/original/${_film.backdropPath}',
                                   ),
-                                ],
+                                  fit: BoxFit.cover),
+                            ),
+                            width: double.infinity,
+                            height: 9 / 16 * MediaQuery.sizeOf(context).width,
+                          ),
+                          // Layer Gradient 1
+                          Positioned.fill(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black54,
+                                    Colors.transparent,
+                                    Colors.transparent,
+                                    Colors.black,
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
                               ),
-                              Gap(10),
-                              Text(
-                                'Trở lại',
-                                style: TextStyle(
+                            ),
+                          ),
+                          // Layer Gradient 2
+                          Positioned.fill(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black,
+                                    Colors.transparent,
+                                  ],
+                                  stops: [0, 0.5],
+                                  begin: Alignment.bottomLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                              ),
+                            ),
+                          ),
+                          /* Content Rating */
+                          Positioned(
+                            bottom: 360,
+                            right: 0,
+                            width: 90,
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF696A6A).withOpacity(0.7),
+                                border: const Border(
+                                  left: BorderSide(
+                                    width: 2,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                _film.contentRating,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black,
-                                      offset: Offset(2.0, 4.0),
-                                      blurRadius: 6.0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          /* Film's Info */
+                          Positioned(
+                            bottom: 20,
+                            left: 50,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _film.name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 52,
+                                    fontWeight: FontWeight.bold,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black,
+                                        offset: Offset(2.0, 4.0),
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const Gap(24),
+
+                                /* Nếu Film được chọn là movie, thì nó không có Season */
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FilledButton.icon(
+                                      style: FilledButton.styleFrom(
+                                        foregroundColor: Colors.black,
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15, horizontal: 20),
+                                      ),
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.play_arrow_rounded,
+                                          size: 30.0),
+                                      label: const Text(
+                                        'Phát',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const Gap(20),
+                                    if (!filmData['isMovie']) ...[
+                                      PopupMenuButton(
+                                        position: PopupMenuPosition.under,
+                                        offset: const Offset(0, 2),
+                                        color: const Color(0xFF444444).withOpacity(0.9),
+                                        surfaceTintColor: Colors.transparent,
+                                        itemBuilder: (ctx) => List.generate(
+                                          _film.seasons.length,
+                                          (index) => PopupMenuItem(
+                                            onTap: () {
+                                              setState(() {
+                                                filmData['currentSeasonIndex'] = index;
+                                              });
+                                            },
+                                            child: Text(
+                                              _film.seasons[index].name,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        tooltip: '',
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
+                                                const Color(0xFF444444).withOpacity(0.9),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal: 24,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                _film
+                                                    .seasons[
+                                                        filmData['currentSeasonIndex']]
+                                                    .name,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const Gap(10),
+                                              const Icon(
+                                                Icons.keyboard_arrow_down_rounded,
+                                                color: Colors.white,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const Gap(20),
+                                    ],
+                                    FavoriteButton(_film.id),
+                                  ],
+                                ),
+                                const Gap(24),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      voteAverage == 0
+                                          ? 'Chưa có đánh giá'
+                                          : 'Bình chọn: ${(voteAverage).toStringAsFixed(1)} ',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (voteAverage > 0)
+                                      const Icon(
+                                        Icons.star_rounded,
+                                        color: Colors.white,
+                                      ),
+                                    const Gap(40),
+                                    Container(
+                                      height: 28,
+                                      width: 2,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(1),
+                                      ),
+                                    ),
+                                    const Gap(40),
+                                    Text(
+                                      'Phát hành: ${_film.releaseDate.toVnFormat()}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      /* Content Rating */
-                      Positioned(
-                        bottom: 360,
-                        right: 0,
-                        width: 90,
-                        child: Container(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF696A6A).withOpacity(0.7),
-                            border: const Border(
-                              left: BorderSide(
-                                width: 2,
-                                color: Colors.white,
-                              ),
+                                const Gap(24),
+                                const Text(
+                                  'Thể loại: ',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(
+                                    _film.genres.length,
+                                    (index) {
+                                      bool isHover = false;
+                                      return StatefulBuilder(
+                                        builder: (ctx, setStateGenre) {
+                                          return TapRegion(
+                                            onTapInside: (_) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => FilmsByGenreDialog(
+                                                  genreId: _film.genres[index].genreId,
+                                                  genreName: _film.genres[index].name,
+                                                ),
+                                              );
+                                            },
+                                            child: MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              onEnter: (_) =>
+                                                  setStateGenre(() => isHover = true),
+                                              onExit: (_) =>
+                                                  setStateGenre(() => isHover = false),
+                                              child: Text(
+                                                _film.genres[index].name +
+                                                    (index == _film.genres.length - 1
+                                                        ? ''
+                                                        : ', '),
+                                                style: TextStyle(
+                                                  color: const Color(0xFFBEBEBE),
+                                                  decoration: isHover
+                                                      ? TextDecoration.underline
+                                                      : null,
+                                                  decorationColor: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Text(
-                            _film.contentRating,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                        ],
                       ),
-                      /* Film's Info */
-                      Positioned(
-                        bottom: 20,
-                        left: 50,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _film.name,
+                              _film.overview,
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 52,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black,
-                                    offset: Offset(2.0, 4.0),
-                                    blurRadius: 6.0,
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const Gap(24),
-
-                            /* Nếu Film được chọn là movie, thì nó không có Season */
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                FilledButton.icon(
-                                  style: FilledButton.styleFrom(
-                                    foregroundColor: Colors.black,
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 20),
-                                  ),
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.play_arrow_rounded, size: 30.0),
-                                  label: const Text(
-                                    'Phát',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const Gap(20),
-                                if (!filmData['isMovie']) ...[
-                                  PopupMenuButton(
-                                    position: PopupMenuPosition.under,
-                                    offset: const Offset(0, 2),
-                                    color: const Color(0xFF444444).withOpacity(0.9),
-                                    surfaceTintColor: Colors.transparent,
-                                    itemBuilder: (ctx) => List.generate(
-                                      _film.seasons.length,
-                                      (index) => PopupMenuItem(
-                                        onTap: () {
-                                          setState(() {
-                                            filmData['currentSeasonIndex'] = index;
-                                          });
-                                        },
-                                        child: Text(
-                                          _film.seasons[index].name,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    tooltip: '',
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF444444).withOpacity(0.9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 24,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            _film.seasons[filmData['currentSeasonIndex']]
-                                                .name,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Gap(10),
-                                          const Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: Colors.white,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const Gap(20),
-                                ],
-                                FavoriteButton(_film.id),
-                              ],
-                            ),
-                            const Gap(24),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Điểm:   ${voteAverage == 0 ? 'Chưa có đánh giá' : 'Điểm: ${(voteAverage * 2).toStringAsFixed(2)}'}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Gap(40),
-                                Ink(
-                                  height: 28,
-                                  width: 2,
-                                  color: Colors.white,
-                                ),
-                                const Gap(40),
-                                Text(
-                                  'Phát hành:   ${_film.releaseDate.toVnFormat()}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Gap(24),
-                            const Text(
-                              'Thể loại: ',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: _isExpandOverview ? 100 : 4,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.justify,
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: List.generate(
-                                _film.genres.length,
-                                (index) {
-                                  bool isHover = false;
-                                  return StatefulBuilder(
-                                    builder: (ctx, setStateGenre) {
-                                      return TapRegion(
-                                        onTapInside: (_) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => FilmsByGenreDialog(
-                                              genreId: _film.genres[index].genreId,
-                                              genreName: _film.genres[index].name,
-                                            ),
-                                          );
-                                        },
-                                        child: MouseRegion(
-                                          cursor: SystemMouseCursors.click,
-                                          onEnter: (_) =>
-                                              setStateGenre(() => isHover = true),
-                                          onExit: (_) =>
-                                              setStateGenre(() => isHover = false),
-                                          child: Text(
-                                            _film.genres[index].name +
-                                                (index == _film.genres.length - 1
-                                                    ? ''
-                                                    : ', '),
-                                            style: TextStyle(
-                                              color: const Color(0xFFBEBEBE),
-                                              decoration: isHover
-                                                  ? TextDecoration.underline
-                                                  : null,
-                                              decorationColor: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
+                            const Gap(4),
+                            if (isOverflowed)
+                              InkWell(
+                                onTap: () => setState(() {
+                                  _isExpandOverview = !_isExpandOverview;
+                                }),
+                                child: Text(
+                                  _isExpandOverview ? 'Ẩn bớt' : 'Xem thêm',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic),
+                                ),
                               ),
+                            const Gap(4),
+                            BottomTab(
+                              /* truyền filmId vào để lấy được Những phim đề xuất của filmId này */
+                              filmId: _film.id,
                             ),
+                            const Gap(20),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _film.overview,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: _isExpandOverview ? 100 : 4,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify,
-                        ),
-                        const Gap(4),
-                        if (isOverflowed)
-                          InkWell(
-                            onTap: () => setState(() {
-                              _isExpandOverview = !_isExpandOverview;
-                            }),
-                            child: Text(
-                              _isExpandOverview ? 'Ẩn bớt' : 'Xem thêm',
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        const Gap(4),
-                        BottomTab(
-                          /* truyền filmId vào để lấy được Những phim đề xuất của filmId này */
-                          filmId: _film.id,
-                        ),
-                        const Gap(20),
-                      ],
+                );
+              },
+            ),
+            Positioned(
+              top: 0,
+              height: 100,
+              left: 0,
+              right: 0,
+              child: BlocBuilder<AppBarCubit, double>(
+                builder: (ctx, offset) {
+                  return Container(
+                    color: Colors.black.withOpacity(
+                      (offset / 350).clamp(0, 1).toDouble(),
                     ),
-                  ),
-                ],
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.white.withOpacity(0.4),
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_back_rounded,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black,
+                                  offset: Offset(2.0, 4.0),
+                                  blurRadius: 6.0,
+                                ),
+                              ],
+                            ),
+                            Gap(10),
+                            Text(
+                              'Trở lại',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black,
+                                    offset: Offset(2.0, 4.0),
+                                    blurRadius: 6.0,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

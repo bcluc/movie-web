@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_web/cubits/app_bar/app_bar_cubit.dart';
 import 'package:movie_web/models/poster.dart';
 import 'package:movie_web/widgets/film_detail/film_detail.dart';
 import 'package:page_transition/page_transition.dart';
@@ -57,7 +59,10 @@ class _ContentListState extends State<ContentList> {
                       onTapInside: (_) {
                         Navigator.of(context).push(
                           PageTransition(
-                            child: FilmDetail(filmId: film.filmId),
+                            child: BlocProvider(
+                              create: (context) => AppBarCubit(),
+                              child: FilmDetail(filmId: film.filmId),
+                            ),
                             type: PageTransitionType.rightToLeft,
                             duration: 300.ms,
                             reverseDuration: 300.ms,

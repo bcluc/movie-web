@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:movie_web/models/poster.dart';
+import 'package:movie_web/widgets/film_detail/film_detail.dart';
+import 'package:page_transition/page_transition.dart';
 
 class GridFilms extends StatelessWidget {
   const GridFilms({
@@ -25,7 +28,7 @@ class GridFilms extends StatelessWidget {
       children: List.generate(
         posters.length,
         (index) {
-          // final filmId = posters[index].filmId;
+          final filmId = posters[index].filmId;
           return GestureDetector(
             onTap: canClick
                 ? () {
@@ -81,6 +84,17 @@ class GridFilms extends StatelessWidget {
                     //     ),
                     //   );
                     // }
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child: FilmDetail(
+                          filmId: filmId,
+                        ),
+                        type: PageTransitionType.rightToLeft,
+                        duration: 300.ms,
+                        reverseDuration: 300.ms,
+                        settings: RouteSettings(name: '/film_detail@$filmId'),
+                      ),
+                    );
                   }
                 : null,
             child: ClipRRect(
